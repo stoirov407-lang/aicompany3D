@@ -23,17 +23,17 @@ function Director() {
 
     if (!group.current) return
 
-    // Дыхание
-    group.current.position.y = 0.72 + Math.sin(t * 1.6) * 0.012
+    group.current.position.y =
+      0.72 + Math.sin(t * 1.6) * 0.012
 
-    // Расслабленное движение тела
-    group.current.rotation.z = Math.sin(t * 0.5) * 0.015
+    group.current.rotation.z =
+      Math.sin(t * 0.5) * 0.015
 
     if (chest.current) {
-      chest.current.scale.y = 1 + Math.sin(t * 1.6) * 0.015
+      chest.current.scale.y =
+        1 + Math.sin(t * 1.6) * 0.015
     }
 
-    // Движение головы
     if (head.current) {
       head.current.rotation.y =
         Math.sin(t * 0.65) * 0.1 +
@@ -43,7 +43,6 @@ function Director() {
         Math.sin(t * 0.45) * 0.02
     }
 
-    // Движение рук
     if (leftArm.current) {
       leftArm.current.rotation.z =
         -0.35 + Math.sin(t * 0.8) * 0.02
@@ -54,7 +53,6 @@ function Director() {
         0.35 + Math.sin(t * 0.7) * 0.02
     }
 
-    // Моргать
     const cycle = t % 5.2
 
     const blink =
@@ -79,11 +77,11 @@ function Director() {
       position={[0, 0.72, -0.72]}
     >
 
-      {/* ================= CHAIR ================= */}
+      {/* CHAIR */}
 
       <group position={[0, 0.38, 0.28]}>
 
-        {/* Спинка */}
+        {/* Back */}
         <mesh
           castShadow
           position={[0, 0.58, 0.08]}
@@ -95,7 +93,7 @@ function Director() {
           />
         </mesh>
 
-        {/* Сиденье */}
+        {/* Seat */}
         <mesh
           castShadow
           position={[0, 0.16, -0.02]}
@@ -107,11 +105,9 @@ function Director() {
           />
         </mesh>
 
-        {/* Центральная стойка */}
+        {/* Column */}
         <mesh position={[0, -0.18, 0]}>
-          <cylinderGeometry
-            args={[0.055, 0.055, 0.5, 20]}
-          />
+          <cylinderGeometry args={[0.055, 0.055, 0.5, 20]} />
           <meshStandardMaterial
             color="#777875"
             metalness={0.55}
@@ -119,28 +115,27 @@ function Director() {
           />
         </mesh>
 
-        {/* Основание */}
+        {/* Base */}
         <mesh position={[0, -0.45, 0]}>
-          <cylinderGeometry
-            args={[0.34, 0.34, 0.06, 32]}
-          />
+          <cylinderGeometry args={[0.34, 0.34, 0.06, 32]} />
           <meshStandardMaterial
             color="#777875"
             metalness={0.5}
             roughness={0.35}
           />
         </mesh>
+
       </group>
 
 
-      {/* ================= BODY ================= */}
+      {/* BODY */}
 
       <group
         ref={chest}
         position={[0, 1.27, -0.02]}
       >
 
-        {/* Белая рубашка */}
+        {/* Shirt */}
         <mesh castShadow>
           <boxGeometry args={[0.58, 0.56, 0.34]} />
           <meshStandardMaterial
@@ -149,7 +144,7 @@ function Director() {
           />
         </mesh>
 
-        {/* Чёрный пиджак */}
+        {/* Suit */}
         <mesh
           castShadow
           position={[0, 0, -0.02]}
@@ -161,7 +156,7 @@ function Director() {
           />
         </mesh>
 
-        {/* Белая часть рубашки */}
+        {/* Shirt opening */}
         <mesh position={[0, 0.03, 0.22]}>
           <boxGeometry args={[0.22, 0.44, 0.025]} />
           <meshStandardMaterial
@@ -170,7 +165,7 @@ function Director() {
           />
         </mesh>
 
-        {/* Галстук */}
+        {/* Tie */}
         <mesh position={[0, -0.02, 0.245]}>
           <boxGeometry args={[0.06, 0.32, 0.035]} />
           <meshStandardMaterial
@@ -184,7 +179,7 @@ function Director() {
           <meshStandardMaterial color="#111111" />
         </mesh>
 
-        {/* Лацканы */}
+        {/* Lapels */}
         <mesh
           position={[-0.15, 0.09, 0.23]}
           rotation={[0, 0, -0.35]}
@@ -200,20 +195,18 @@ function Director() {
           <boxGeometry args={[0.045, 0.34, 0.035]} />
           <meshStandardMaterial color="#303030" />
         </mesh>
+
       </group>
 
 
-      {/* ================= LEGS ================= */}
+      {/* LEGS */}
 
-      {/* Левая согнутая нога */}
       <group
         position={[-0.17, 0.92, 0.03]}
         rotation={[0.9, 0, 0]}
       >
         <mesh castShadow>
-          <capsuleGeometry
-            args={[0.105, 0.38, 8, 16]}
-          />
+          <capsuleGeometry args={[0.105, 0.38, 8, 16]} />
           <meshStandardMaterial
             color="#171717"
             roughness={0.4}
@@ -221,15 +214,12 @@ function Director() {
         </mesh>
       </group>
 
-      {/* Правая согнутая нога */}
       <group
         position={[0.17, 0.92, 0.03]}
         rotation={[0.9, 0, 0]}
       >
         <mesh castShadow>
-          <capsuleGeometry
-            args={[0.105, 0.38, 8, 16]}
-          />
+          <capsuleGeometry args={[0.105, 0.38, 8, 16]} />
           <meshStandardMaterial
             color="#171717"
             roughness={0.4}
@@ -237,15 +227,14 @@ function Director() {
         </mesh>
       </group>
 
-      {/* Голени */}
+      {/* Lower legs */}
+
       <mesh
         position={[-0.17, 0.62, 0.38]}
         rotation={[-0.45, 0, 0]}
         castShadow
       >
-        <capsuleGeometry
-          args={[0.09, 0.3, 8, 16]}
-        />
+        <capsuleGeometry args={[0.09, 0.3, 8, 16]} />
         <meshStandardMaterial
           color="#171717"
           roughness={0.4}
@@ -257,16 +246,15 @@ function Director() {
         rotation={[-0.45, 0, 0]}
         castShadow
       >
-        <capsuleGeometry
-          args={[0.09, 0.3, 8, 16]}
-        />
+        <capsuleGeometry args={[0.09, 0.3, 8, 16]} />
         <meshStandardMaterial
           color="#171717"
           roughness={0.4}
         />
       </mesh>
 
-      {/* Обувь */}
+      {/* Shoes */}
+
       <mesh
         position={[-0.17, 0.48, 0.48]}
         castShadow
@@ -290,95 +278,87 @@ function Director() {
       </mesh>
 
 
-      {/* ================= ARMS ================= */}
+      {/* LEFT ARM */}
 
-      {/* Левая рука */}
       <group
         ref={leftArm}
         position={[-0.36, 1.28, 0.02]}
         rotation={[0, 0, -0.35]}
       >
+
         <mesh castShadow>
-          <capsuleGeometry
-            args={[0.08, 0.4, 8, 16]}
-          />
+          <capsuleGeometry args={[0.08, 0.4, 8, 16]} />
           <meshStandardMaterial
             color="#151515"
             roughness={0.4}
           />
         </mesh>
 
-        {/* Кисть */}
-        <mesh
-          position={[0, -0.27, 0.03]}
-        >
+        <mesh position={[0, -0.27, 0.03]}>
           <sphereGeometry args={[0.095, 24, 16]} />
           <meshStandardMaterial
             color="#d9ad91"
             roughness={0.55}
           />
         </mesh>
+
       </group>
 
-      {/* Правая рука */}
+
+      {/* RIGHT ARM */}
+
       <group
         ref={rightArm}
         position={[0.36, 1.28, 0.02]}
         rotation={[0, 0, 0.35]}
       >
+
         <mesh castShadow>
-          <capsuleGeometry
-            args={[0.08, 0.4, 8, 16]}
-          />
+          <capsuleGeometry args={[0.08, 0.4, 8, 16]} />
           <meshStandardMaterial
             color="#151515"
             roughness={0.4}
           />
         </mesh>
 
-        {/* Кисть */}
-        <mesh
-          position={[0, -0.27, 0.03]}
-        >
+        <mesh position={[0, -0.27, 0.03]}>
           <sphereGeometry args={[0.095, 24, 16]} />
           <meshStandardMaterial
             color="#d9ad91"
             roughness={0.55}
           />
         </mesh>
+
       </group>
 
 
-      {/* ================= HEAD ================= */}
+      {/* HEAD */}
 
       <group
         ref={head}
         position={[0, 1.94, 0]}
       >
 
-        {/* Шея */}
+        {/* Neck */}
         <mesh position={[0, -0.29, 0]}>
-          <cylinderGeometry
-            args={[0.11, 0.12, 0.2, 24]}
-          />
+          <cylinderGeometry args={[0.11, 0.12, 0.2, 24]} />
           <meshStandardMaterial
             color="#d9ad91"
             roughness={0.55}
           />
         </mesh>
 
-        {/* Голова */}
+        {/* Head */}
         <mesh castShadow>
-          <sphereGeometry
-            args={[0.34, 40, 32]}
-          />
+          <sphereGeometry args={[0.34, 40, 32]} />
           <meshStandardMaterial
             color="#e1b69a"
             roughness={0.5}
           />
         </mesh>
 
-        {/* Уши */}
+        {/* Ears */}
+
         <mesh position={[-0.33, 0, 0]}>
           <sphereGeometry args={[0.075, 20, 16]} />
           <meshStandardMaterial
@@ -395,28 +375,26 @@ function Director() {
           />
         </mesh>
 
-        {/* Волосы */}
+        {/* Hair */}
+
         <mesh
           position={[0, 0.21, -0.005]}
           scale={[1.02, 0.6, 1.02]}
         >
-          <sphereGeometry
-            args={[0.35, 40, 24]}
-          />
+          <sphereGeometry args={[0.35, 40, 24]} />
           <meshStandardMaterial
             color="#202020"
             roughness={0.32}
           />
         </mesh>
 
-        {/* Левый глаз */}
+        {/* Left eye */}
+
         <mesh
           ref={leftEye}
           position={[-0.125, 0.035, 0.315]}
         >
-          <sphereGeometry
-            args={[0.082, 32, 24]}
-          />
+          <sphereGeometry args={[0.082, 32, 24]} />
           <meshStandardMaterial
             color="#ffffff"
             roughness={0.25}
@@ -426,23 +404,20 @@ function Director() {
         <mesh
           position={[-0.125, 0.035, 0.39]}
         >
-          <sphereGeometry
-            args={[0.037, 24, 20]}
-          />
+          <sphereGeometry args={[0.037, 24, 20]} />
           <meshStandardMaterial
             color="#171717"
             roughness={0.2}
           />
         </mesh>
 
-        {/* Правый глаз */}
+        {/* Right eye */}
+
         <mesh
           ref={rightEye}
           position={[0.125, 0.035, 0.315]}
         >
-          <sphereGeometry
-            args={[0.082, 32, 24]}
-          />
+          <sphereGeometry args={[0.082, 32, 24]} />
           <meshStandardMaterial
             color="#ffffff"
             roughness={0.25}
@@ -452,16 +427,15 @@ function Director() {
         <mesh
           position={[0.125, 0.035, 0.39]}
         >
-          <sphereGeometry
-            args={[0.037, 24, 20]}
-          />
+          <sphereGeometry args={[0.037, 24, 20]} />
           <meshStandardMaterial
             color="#171717"
             roughness={0.2}
           />
         </mesh>
 
-        {/* Брови */}
+        {/* Eyebrows */}
+
         <mesh
           position={[-0.125, 0.145, 0.335]}
           rotation={[0, 0, -0.12]}
@@ -478,7 +452,8 @@ function Director() {
           <meshStandardMaterial color="#202020" />
         </mesh>
 
-        {/* Нос */}
+        {/* Nose */}
+
         <mesh
           position={[0, -0.015, 0.365]}
           rotation={[Math.PI / 2, 0, 0]}
@@ -490,7 +465,8 @@ function Director() {
           />
         </mesh>
 
-        {/* Улыбка */}
+        {/* Mouth */}
+
         <mesh
           position={[0, -0.13, 0.345]}
           rotation={[Math.PI / 2, 0, 0]}
@@ -504,23 +480,24 @@ function Director() {
           />
         </mesh>
 
-        {/* Борода */}
+        {/* Beard */}
+
         <mesh
           position={[0, -0.205, 0.22]}
           scale={[0.55, 0.28, 0.35]}
         >
-          <sphereGeometry
-            args={[0.16, 24, 16]}
-          />
+          <sphereGeometry args={[0.16, 24, 16]} />
           <meshStandardMaterial
             color="#353535"
             roughness={0.65}
           />
         </mesh>
+
       </group>
 
 
-      {/* Надпись */}
+      {/* LABEL */}
+
       <Html
         position={[0, 2.48, 0]}
         center
@@ -530,6 +507,7 @@ function Director() {
           AI DIRECTOR
         </div>
       </Html>
+
     </group>
   )
 }
@@ -541,25 +519,23 @@ function Desk() {
       position={[0, 0.82, -1.05]}
     >
 
-      {/* Столешница */}
+      {/* Table top */}
+
       <mesh castShadow>
-        <boxGeometry
-          args={[2.05, 0.12, 0.85]}
-        />
+        <boxGeometry args={[2.05, 0.12, 0.85]} />
         <meshStandardMaterial
           color="#f5f5f2"
           roughness={0.35}
         />
       </mesh>
 
-      {/* Левая ножка */}
+      {/* Left leg */}
+
       <mesh
         position={[-0.78, -0.42, 0]}
         castShadow
       >
-        <boxGeometry
-          args={[0.07, 0.78, 0.65]}
-        />
+        <boxGeometry args={[0.07, 0.78, 0.65]} />
         <meshStandardMaterial
           color="#bfc0bc"
           metalness={0.35}
@@ -567,14 +543,13 @@ function Desk() {
         />
       </mesh>
 
-      {/* Правая ножка */}
+      {/* Right leg */}
+
       <mesh
         position={[0.78, -0.42, 0]}
         castShadow
       >
-        <boxGeometry
-          args={[0.07, 0.78, 0.65]}
-        />
+        <boxGeometry args={[0.07, 0.78, 0.65]} />
         <meshStandardMaterial
           color="#bfc0bc"
           metalness={0.35}
@@ -582,27 +557,25 @@ function Desk() {
         />
       </mesh>
 
-      {/* Монитор */}
+      {/* Monitor */}
+
       <mesh
         position={[0, 0.38, -0.13]}
         castShadow
       >
-        <boxGeometry
-          args={[0.78, 0.48, 0.06]}
-        />
+        <boxGeometry args={[0.78, 0.48, 0.06]} />
         <meshStandardMaterial
           color="#171717"
           roughness={0.25}
         />
       </mesh>
 
-      {/* Экран */}
+      {/* Screen */}
+
       <mesh
         position={[0, 0.38, -0.095]}
       >
-        <boxGeometry
-          args={[0.69, 0.38, 0.02]}
-        />
+        <boxGeometry args={[0.69, 0.38, 0.02]} />
         <meshStandardMaterial
           color="#dfe3e0"
           emissive="#ffffff"
@@ -610,15 +583,15 @@ function Desk() {
         />
       </mesh>
 
-      {/* Подставка монитора */}
+      {/* Monitor stand */}
+
       <mesh
         position={[0, 0.1, -0.13]}
       >
-        <boxGeometry
-          args={[0.07, 0.3, 0.07]}
-        />
+        <boxGeometry args={[0.07, 0.3, 0.07]} />
         <meshStandardMaterial color="#333333" />
       </mesh>
+
     </group>
   )
 }
@@ -650,6 +623,7 @@ function OfficeScene() {
       <Environment preset="studio" />
 
       {/* FLOOR */}
+
       <mesh
         rotation={[-Math.PI / 2, 0, 0]}
         position={[0, -0.02, 0]}
@@ -663,13 +637,12 @@ function OfficeScene() {
       </mesh>
 
       {/* BACK WALL */}
+
       <mesh
         position={[0, 1.9, -2.4]}
         receiveShadow
       >
-        <boxGeometry
-          args={[7, 3.8, 0.12]}
-        />
+        <boxGeometry args={[7, 3.8, 0.12]} />
         <meshStandardMaterial
           color="#eeeeea"
           roughness={0.7}
@@ -677,14 +650,13 @@ function OfficeScene() {
       </mesh>
 
       {/* SIDE WALL */}
+
       <mesh
         position={[-3.45, 1.9, 0]}
         rotation={[0, Math.PI / 2, 0]}
         receiveShadow
       >
-        <boxGeometry
-          args={[7, 3.8, 0.12]}
-        />
+        <boxGeometry args={[7, 3.8, 0.12]} />
         <meshStandardMaterial
           color="#f4f4f1"
           roughness={0.7}
@@ -692,12 +664,11 @@ function OfficeScene() {
       </mesh>
 
       {/* WINDOW */}
+
       <mesh
         position={[1.8, 2.05, -2.32]}
       >
-        <boxGeometry
-          args={[2.5, 2.15, 0.05]}
-        />
+        <boxGeometry args={[2.5, 2.15, 0.05]} />
         <meshStandardMaterial
           color="#dfe7e8"
           metalness={0.05}
@@ -705,13 +676,10 @@ function OfficeScene() {
         />
       </mesh>
 
-      {/* Window frame */}
       <mesh
         position={[1.8, 2.05, -2.27]}
       >
-        <boxGeometry
-          args={[0.035, 2.15, 0.03]}
-        />
+        <boxGeometry args={[0.035, 2.15, 0.03]} />
         <meshStandardMaterial
           color="#c4c8c6"
         />
@@ -720,25 +688,24 @@ function OfficeScene() {
       <mesh
         position={[1.8, 2.05, -2.27]}
       >
-        <boxGeometry
-          args={[2.5, 0.035, 0.03]}
-        />
+        <boxGeometry args={[2.5, 0.035, 0.03]} />
         <meshStandardMaterial
           color="#c4c8c6"
         />
       </mesh>
+
+      {/* DESK + DIRECTOR */}
 
       <Desk />
       <Director />
 
-      {/* Plant */}
+      {/* PLANT */}
+
       <mesh
         position={[2.65, 0.45, -0.65]}
         castShadow
       >
-        <cylinderGeometry
-          args={[0.42, 0.34, 0.8, 32]}
-        />
+        <cylinderGeometry args={[0.42, 0.34, 0.8, 32]} />
         <meshStandardMaterial
           color="#dadbd7"
           roughness={0.5}
@@ -748,9 +715,7 @@ function OfficeScene() {
       <mesh
         position={[2.65, 1.0, -0.65]}
       >
-        <sphereGeometry
-          args={[0.55, 24, 16]}
-        />
+        <sphereGeometry args={[0.55, 24, 16]} />
         <meshStandardMaterial
           color="#8d9b8d"
           roughness={0.7}
@@ -781,18 +746,11 @@ function OfficeScene() {
 function OfficeVisual() {
   return (
     <div className="office-wrap">
+
       <Canvas
         shadows
         camera={{
-          <Canvas
-  shadows
-  camera={{
-    position: [4.8, 3.1, 5.8],
-    fov: 38,
-  }}
->
-  <OfficeScene />
-</Canvas>
+          position: [4.8, 3.1, 5.8],
           fov: 38,
         }}
       >
@@ -802,6 +760,7 @@ function OfficeVisual() {
       <div className="office-hint">
         DRAG TO EXPLORE · 3D OFFICE
       </div>
+
     </div>
   )
 }
@@ -825,6 +784,7 @@ function App() {
         </a>
 
         <div className="nav-links">
+
           <a href="#company">
             Company
           </a>
@@ -836,6 +796,7 @@ function App() {
           <a href="#agents">
             Agents
           </a>
+
         </div>
 
         <button className="nav-button">
@@ -930,30 +891,48 @@ function App() {
         <div className="flow-grid">
 
           <article>
+
             <span>01</span>
-            <h4>AI Director</h4>
+
+            <h4>
+              AI Director
+            </h4>
+
             <p>
               Understands goals, plans work and
               coordinates the company.
             </p>
+
           </article>
 
           <article>
+
             <span>02</span>
-            <h4>AI Agents</h4>
+
+            <h4>
+              AI Agents
+            </h4>
+
             <p>
               Specialized digital employees execute
               focused responsibilities.
             </p>
+
           </article>
 
           <article>
+
             <span>03</span>
-            <h4>Real Work</h4>
+
+            <h4>
+              Real Work
+            </h4>
+
             <p>
               Tasks become actions, decisions and
               measurable company output.
             </p>
+
           </article>
 
         </div>
@@ -962,8 +941,15 @@ function App() {
 
 
       <footer id="agents">
-        <span>AI COMPANY</span>
-        <span>YOUR OFFICE, ONLINE.</span>
+
+        <span>
+          AI COMPANY
+        </span>
+
+        <span>
+          YOUR OFFICE, ONLINE.
+        </span>
+
       </footer>
 
     </main>
