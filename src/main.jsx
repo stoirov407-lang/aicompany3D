@@ -784,7 +784,15 @@ function OfficeVisual() {
       <Canvas
         shadows
         camera={{
-          position={[4.8, 3.1, 5.8],
+          <Canvas
+  shadows
+  camera={{
+    position: [4.8, 3.1, 5.8],
+    fov: 38,
+  }}
+>
+  <OfficeScene />
+</Canvas>
           fov: 38,
         }}
       >
