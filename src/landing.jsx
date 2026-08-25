@@ -2,8 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Environment, Float, Html } from '@react-three/drei'
-import * as THREE from 'three'
-import './landing.css'
+import './city3d.css'
 
 const plans = [
   { id:'FREE', price:'$0', period:'forever', agents:'1 active agent', office:'S · 3 places', note:'AI Director + base AI company', cta:'Start free' },
@@ -13,74 +12,8 @@ const plans = [
   { id:'PRO', price:'$29.99', period:'/ month', agents:'50 active agents', office:'XL · 10 places', note:'AI analytics · 24/7 priority', cta:'Choose PRO' },
   { id:'LUXURY', price:'$199.50', period:'lifetime', agents:'Unlimited agents', office:'XXL · 15+', note:'All future updates included', cta:'Choose LUXURY' },
 ]
-
-const officeSizes = [
-  ['S',3],['M',5],['L',7],['XL',10],['XXL',15]
-]
-
-function Building({ position, scale=1, label, places, featured=false }) {
-  const windows = useMemo(() => Array.from({length: Math.max(3, Math.min(10, places))}), [places])
-  return <group position={position} scale={scale}>
-    <mesh position={[0,1.2,0]} castShadow>
-      <boxGeometry args={[3.4,2.4,2.7]} />
-      <meshPhysicalMaterial color="#f7faff" roughness={.18} metalness={.05} transmission={.08} transparent opacity={.96} />
-    </mesh>
-    <mesh position={[0,2.43,0]}>
-      <boxGeometry args={[3.65,.08,2.95]} />
-      <meshStandardMaterial color="#dfeeff" emissive="#3f8cff" emissiveIntensity={featured ? 1.3 : .55} transparent opacity={.92} />
-    </mesh>
-    {windows.map((_,i) => <mesh key={i} position={[-1.15+(i%5)*.58,1.2,i>4?.82:-1.36]}>
-      <boxGeometry args={[.32,.42,.035]} />
-      <meshStandardMaterial color="#d8ecff" emissive="#2e86ff" emissiveIntensity={featured ? 2.1 : .8} />
-    </mesh>)}
-    <Html center position={[0,2.75,0]} distanceFactor={10}>
-      <div className="city-label"><b>{label}</b><span>{places}+ places</span></div>
-    </Html>
-  </group>
-}
-
-function City3D(){
-  const buildings = [
-    {p:[-8,0,-4],s:.9,l:'OFFICE S',n:3},{p:[-4,0,-1],s:1,l:'OFFICE M',n:5},
-    {p:[0,0,-5],s:1.2,l:'OFFICE L',n:7},{p:[4.4,0,-1],s:1.35,l:'OFFICE XL',n:10},
-    {p:[8,0,-5],s:1.6,l:'OFFICE XXL',n:15},{p:[-7,0,3],s:.75,l:'TEAM',n:3},
-    {p:[-2,0,4],s:.95,l:'STUDIO',n:5},{p:[3,0,3],s:1.05,l:'LAB',n:7},{p:[7,0,4],s:1.25,l:'HQ',n:10}
-  ]
-  return <div className="city3d">
-    <Canvas shadows camera={{position:[14,11,17], fov:38}}>
-      <color attach="background" args={['#f5f8fc']} />
-      <ambientLight intensity={1.8}/><directionalLight position={[8,14,7]} intensity={2.2} castShadow />
-      <pointLight position={[0,5,0]} color="#5ba2ff" intensity={22} distance={16}/>
-      <Environment preset="city" />
-      <mesh rotation={[-Math.PI/2,0,0]} receiveShadow><planeGeometry args={[32,26]}/><meshStandardMaterial color="#eef3f8" roughness={.7}/></mesh>
-      <gridHelper args={[30,15,'#d6e1ee','#edf2f7']} position={[0,.015,0]} />
-      {buildings.map((b,i)=><Building key={i} position={b.p} scale={b.s} label={b.l} places={b.n} featured={i===4}/>) }
-      <Float speed={1.2} rotationIntensity={.08} floatIntensity={.35}><mesh position={[0,4.8,1]}><sphereGeometry args={[.22,24,24]}/><meshStandardMaterial color="#3d8cff" emissive="#3d8cff" emissiveIntensity={3}/></mesh></Float>
-      <OrbitControls enablePan={false} minDistance={13} maxDistance={25} maxPolarAngle={Math.PI/2.05} minPolarAngle={Math.PI/3.4} />
-    </Canvas>
-    <div className="city-ui"><span>LIVE CITY</span><b>∞ AI OFFICES</b><small>Drag to explore · every building is a company workspace</small></div>
-  </div>
-}
-
-function App(){
- const [selected,setSelected]=useState(null), [loading,setLoading]=useState(false), [message,setMessage]=useState('')
- const choose=async plan=>{
-   setSelected(plan); setMessage('')
-   if(plan==='FREE'||plan==='TRIAL') return
-   setLoading(true)
-   try{const r=await fetch('/api/create-checkout-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan})});const data=await r.json();if(data.url) window.location.href=data.url;else setMessage(data.error||'Stripe checkout is not configured yet.')}catch(e){setMessage('Could not start checkout. Please try again.')}finally{setLoading(false)}
- }
- return <>
-  <nav><div className="brand"><span className="logo">O</span><span>OFFICE</span><em>AI COMPANY</em></div><div className="links"><a href="#city">City</a><a href="#process">Process</a><a href="#pricing">Pricing</a></div><button className="pill ghost">Sign in</button></nav>
-  <main>
-   <section className="hero" id="city"><div className="hero-copy"><div className="eyebrow">ONLINE COMPANY <span/></div><h1>A city where<br/><i>AI companies live.</i></h1><p>Turn an offline organization into a working online company. A Director manages intelligent agents, discussion rooms, offices, tasks and reports.</p><div className="hero-actions"><button className="pill primary" onClick={()=>choose('FREE')}>Create free company <span>↗</span></button><a className="pill ghost" href="#pricing">Explore plans</a></div><div className="proof"><i/> AI Director is free · agents stay saved after a plan ends</div></div><City3D/></section>
-   <section className="office-strip"><div className="section-label">01 / THE OFFICE</div><div className="office-head"><h2>Minimal spaces.<br/><i>Real AI work.</i></h2><p>Every company gets a living 3D office. Glass rooms, a larger Director office and a central Discussion Room make the workflow visible.</p></div><div className="office-scene"><div className="glow-orb"/><div className="glass director-room"><strong>AI DIRECTOR</strong><span>Strategy · control · reports</span></div><div className="glass room r1"><b>MARKETING</b><small>Working</small></div><div className="glass room r2"><b>ANALYST</b><small>Thinking</small></div><div className="glass room r3"><b>DEVELOPER</b><small>Working</small></div><div className="glass meeting"><b>DISCUSSION ROOM</b><span>Director + selected agents</span></div></div></section>
-   <section className="process" id="process"><div className="section-label">02 / COMPANY PROCESS</div><div className="process-grid"><div><h2>User gives a goal.<br/><i>Director runs the company.</i></h2><p>The user stays in control. The Director analyzes the goal, proposes agents, calls the right team into Discussion, assigns work, checks results and returns a clear report.</p></div><div className="steps">{[['01','GOAL','User gives the Director a business task.'],['02','DISCUSSION','Director calls the right agents into the meeting room.'],['03','WORK','Agents leave for their offices and execute tasks.'],['04','REPORT','Director verifies the work and explains what went right or wrong.']].map(s=><article key={s[0]}><span>{s[0]}</span><b>{s[1]}</b><p>{s[2]}</p></article>)}</div></div></section>
-   <section className="pricing" id="pricing"><div className="section-label">03 / PLANS</div><div className="pricing-head"><h2>Start free.<br/><i>Scale the city.</i></h2><p>Creating and saving agents is free. Your plan controls active agents and the size of your company office.</p></div><div className="cards">{plans.map(p=><article className={`card ${p.id==='PRO'?'featured':''}`} key={p.id}><div className="card-top"><span>{p.id}</span>{p.id==='PRO'&&<label>POPULAR</label>}</div><div className="price">{p.price}<small>{p.period}</small></div><b>{p.agents}</b><p>{p.office}</p><p className="note">{p.note}</p><button className="pill" onClick={()=>choose(p.id)} disabled={loading}>{loading&&selected===p.id?'Opening…':p.cta}</button><small className="save">Saved agents are never deleted.</small></article>)}</div><div className="office-scale">{officeSizes.map(([s,n])=><div key={s}><span>{s}</span><b>{n === 15 ? '15+' : n} places</b></div>)}</div></section>
-   <section className="promise"><div><span>04 / PRODUCT RULE</span><h2>Nothing disappears<br/><i>when a plan ends.</i></h2></div><p>When a paid plan expires, agents, tasks and company data stay in the account. Agents above the new active limit become inactive. Subscribe again and eligible agents return to work.</p></section>
-  </main><footer><span>OFFICE · AI COMPANY</span><span>Virtual offices for intelligent teams</span></footer>
-  {selected&&(selected==='FREE'||selected==='TRIAL')&&<div className="modal" onClick={()=>setSelected(null)}><div className="modal-box" onClick={e=>e.stopPropagation()}><button className="x" onClick={()=>setSelected(null)}>×</button><span>START {selected}</span><h3>{selected==='FREE'?'Create your AI company':'Start your 14-day trial'}</h3><p>{selected==='FREE'?'AI Director and your base company are free. No card required.':'Try the expanded team experience for 14 days.'}</p><button className="pill primary wide" onClick={()=>setSelected(null)}>Continue</button></div></div>}
-  {message&&<div className="toast">{message}<button onClick={()=>setMessage('')}>×</button></div>}
- </>
-}
+const officeSizes=[['S',3],['M',5],['L',7],['XL',10],['XXL',15]]
+function Building({position,scale=1,label,places,featured=false}){const windows=useMemo(()=>Array.from({length:Math.max(3,Math.min(10,places))}),[places]);return <group position={position} scale={scale}><mesh position={[0,1.2,0]} castShadow><boxGeometry args={[3.4,2.4,2.7]}/><meshPhysicalMaterial color="#f7faff" roughness={.18} metalness={.05} transmission={.08} transparent opacity={.96}/></mesh><mesh position={[0,2.43,0]}><boxGeometry args={[3.65,.08,2.95]}/><meshStandardMaterial color="#dfeeff" emissive="#3f8cff" emissiveIntensity={featured?1.3:.55} transparent opacity={.92}/></mesh>{windows.map((_,i)=><mesh key={i} position={[-1.15+(i%5)*.58,1.2,i>4?.82:-1.36]}><boxGeometry args={[.32,.42,.035]}/><meshStandardMaterial color="#d8ecff" emissive="#2e86ff" emissiveIntensity={featured?2.1:.8}/></mesh>)}<Html center position={[0,2.75,0]} distanceFactor={10}><div className="city-label"><b>{label}</b><span>{places}+ places</span></div></Html></group>}
+function City3D(){const buildings=[{p:[-8,0,-4],s:.9,l:'OFFICE S',n:3},{p:[-4,0,-1],s:1,l:'OFFICE M',n:5},{p:[0,0,-5],s:1.2,l:'OFFICE L',n:7},{p:[4.4,0,-1],s:1.35,l:'OFFICE XL',n:10},{p:[8,0,-5],s:1.6,l:'OFFICE XXL',n:15},{p:[-7,0,3],s:.75,l:'TEAM',n:3},{p:[-2,0,4],s:.95,l:'STUDIO',n:5},{p:[3,0,3],s:1.05,l:'LAB',n:7},{p:[7,0,4],s:1.25,l:'HQ',n:10}];return <div className="city3d"><Canvas shadows camera={{position:[14,11,17],fov:38}}><color attach="background" args={['#f5f8fc']}/><ambientLight intensity={1.8}/><directionalLight position={[8,14,7]} intensity={2.2} castShadow/><pointLight position={[0,5,0]} color="#5ba2ff" intensity={22} distance={16}/><Environment preset="city"/><mesh rotation={[-Math.PI/2,0,0]} receiveShadow><planeGeometry args={[32,26]}/><meshStandardMaterial color="#eef3f8" roughness={.7}/></mesh><gridHelper args={[30,15,'#d6e1ee','#edf2f7']} position={[0,.015,0]}/>{buildings.map((b,i)=><Building key={i} position={b.p} scale={b.s} label={b.l} places={b.n} featured={i===4}/>)}<Float speed={1.2} rotationIntensity={.08} floatIntensity={.35}><mesh position={[0,4.8,1]}><sphereGeometry args={[.22,24,24]}/><meshStandardMaterial color="#3d8cff" emissive="#3d8cff" emissiveIntensity={3}/></mesh></Float><OrbitControls enablePan={false} minDistance={13} maxDistance={25} maxPolarAngle={Math.PI/2.05} minPolarAngle={Math.PI/3.4}/></Canvas><div className="city-ui"><span>LIVE CITY</span><b>∞ AI OFFICES</b><small>Drag to explore · every building is a company workspace</small></div></div>}
+function App(){const[selected,setSelected]=useState(null),[loading,setLoading]=useState(false),[message,setMessage]=useState('');const choose=async plan=>{setSelected(plan);setMessage('');if(plan==='FREE'||plan==='TRIAL')return;setLoading(true);try{const r=await fetch('/api/create-checkout-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan})});const data=await r.json();if(data.url)window.location.href=data.url;else setMessage(data.error||'Stripe checkout is not configured yet.')}catch(e){setMessage('Could not start checkout. Please try again.')}finally{setLoading(false)}};return <><nav><div className="brand"><span className="logo">O</span><span>OFFICE</span><em>AI COMPANY</em></div><div className="links"><a href="#city">City</a><a href="#process">Process</a><a href="#pricing">Pricing</a></div><button className="pill ghost">Sign in</button></nav><main><section className="hero" id="city"><div className="hero-copy"><div className="eyebrow">ONLINE COMPANY <span/></div><h1>A city where<br/><i>AI companies live.</i></h1><p>Turn an offline organization into a working online company. A Director manages intelligent agents, discussion rooms, offices, tasks and reports.</p><div className="hero-actions"><button className="pill primary" onClick={()=>choose('FREE')}>Create free company <span>↗</span></button><a className="pill ghost" href="#pricing">Explore plans</a></div><div className="proof"><i/> AI Director is free · agents stay saved after a plan ends</div></div><City3D/></section><section className="office-strip"><div className="section-label">01 / THE OFFICE</div><div className="office-head"><h2>Minimal spaces.<br/><i>Real AI work.</i></h2><p>Every company gets a living 3D office. Glass rooms, a larger Director office and a central Discussion Room make the workflow visible.</p></div><div className="office-scene"><div className="glow-orb"/><div className="glass director-room"><strong>AI DIRECTOR</strong><span>Strategy · control · reports</span></div><div className="glass room r1"><b>MARKETING</b><small>Working</small></div><div className="glass room r2"><b>ANALYST</b><small>Thinking</small></div><div className="glass room r3"><b>DEVELOPER</b><small>Working</small></div><div className="glass meeting"><b>DISCUSSION ROOM</b><span>Director + selected agents</span></div></div></section><section className="process" id="process"><div className="section-label">02 / COMPANY PROCESS</div><div className="process-grid"><div><h2>User gives a goal.<br/><i>Director runs the company.</i></h2><p>The user stays in control. The Director analyzes the goal, proposes agents, calls the right team into Discussion, assigns work, checks results and returns a clear report.</p></div><div className="steps">{[['01','GOAL','User gives the Director a business task.'],['02','DISCUSSION','Director calls the right agents into the meeting room.'],['03','WORK','Agents leave for their offices and execute tasks.'],['04','REPORT','Director verifies the work and explains what went right or wrong.']].map(s=><article key={s[0]}><span>{s[0]}</span><b>{s[1]}</b><p>{s[2]}</p></article>)}</div></div></section><section className="pricing" id="pricing"><div className="section-label">03 / PLANS</div><div className="pricing-head"><h2>Start free.<br/><i>Scale the city.</i></h2><p>Creating and saving agents is free. Your plan controls active agents and the size of your company office.</p></div><div className="cards">{plans.map(p=><article className={`card ${p.id==='PRO'?'featured':''}`} key={p.id}><div className="card-top"><span>{p.id}</span>{p.id==='PRO'&&<label>POPULAR</label>}</div><div className="price">{p.price}<small>{p.period}</small></div><b>{p.agents}</b><p>{p.office}</p><p className="note">{p.note}</p><button className="pill" onClick={()=>choose(p.id)} disabled={loading}>{loading&&selected===p.id?'Opening…':p.cta}</button><small className="save">Saved agents are never deleted.</small></article>)}</div><div className="office-scale">{officeSizes.map(([s,n])=><div key={s}><span>{s}</span><b>{n===15?'15+':n} places</b></div>)}</div></section><section className="promise"><div><span>04 / PRODUCT RULE</span><h2>Nothing disappears<br/><i>when a plan ends.</i></h2></div><p>When a paid plan expires, agents, tasks and company data stay in the account. Agents above the new active limit become inactive. Subscribe again and eligible agents return to work.</p></section></main><footer><span>OFFICE · AI COMPANY</span><span>Virtual offices for intelligent teams</span></footer>{selected&&(selected==='FREE'||selected==='TRIAL')&&<div className="modal" onClick={()=>setSelected(null)}><div className="modal-box" onClick={e=>e.stopPropagation()}><button className="x" onClick={()=>setSelected(null)}>×</button><span>START {selected}</span><h3>{selected==='FREE'?'Create your AI company':'Start your 14-day trial'}</h3><p>{selected==='FREE'?'AI Director and your base company are free. No card required.':'Try the expanded team experience for 14 days.'}</p><button className="pill primary wide" onClick={()=>setSelected(null)}>Continue</button></div></div>}{message&&<div className="toast">{message}<button onClick={()=>setMessage('')}>×</button></div>}</>}
 createRoot(document.getElementById('root')).render(<App/>)
