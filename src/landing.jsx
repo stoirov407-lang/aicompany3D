@@ -13,45 +13,46 @@ const plans=[
   {id:'LUXURY',price:'$199.50',period:'lifetime',limit:Infinity,office:'XXL · 15+'}
 ]
 const categories=['Development','Data & Analytics','Finance','Business','Research','Marketing','Content','Design','Sales & E-commerce','HR','Legal & Compliance','Project Management','AI & Automation','QA & Testing','Security']
+
+// Only subscription offices are visible in the city. Each level is physically larger than the previous one.
 const buildings=[
-  {id:'FREE',p:[-11,0,-5],s:1,l:'FREE OFFICE',c:'S',places:3},
-  {id:'GO',p:[-5.5,0,-2],s:1.08,l:'GO OFFICE',c:'M',places:5},
-  {id:'PLUS',p:[0,0,-6],s:1.18,l:'PLUS OFFICE',c:'L',places:7},
-  {id:'PRO',p:[6,0,-2],s:1.32,l:'PRO OFFICE',c:'XL',places:10},
-  {id:'LUXURY',p:[12,0,-6],s:1.58,l:'LUXURY HQ',c:'XXL',places:15},
-  {id:'RESEARCH',p:[-9,0,5],s:1,l:'RESEARCH LAB',c:'M',places:5},
-  {id:'STUDIO',p:[-2,0,6],s:1.12,l:'AI STUDIO',c:'L',places:7},
-  {id:'CAMPUS',p:[5,0,5],s:1.3,l:'AI CAMPUS',c:'XL',places:10}
+  {id:'FREE',p:[-10,0,-1],s:.58,l:'FREE OFFICE',c:'S',places:3},
+  {id:'GO',p:[-4.7,0,-1],s:.82,l:'GO OFFICE',c:'M',places:5},
+  {id:'PLUS',p:[1.8,0,-1],s:1.08,l:'PLUS OFFICE',c:'L',places:7},
+  {id:'PRO',p:[9.4,0,-1],s:1.38,l:'PRO OFFICE',c:'XL',places:10},
+  {id:'LUXURY',p:[18.5,0,-1],s:1.78,l:'LUXURY HQ',c:'XXL',places:15}
 ]
 
 function Building({b,onEnter}){
-  const fins=useMemo(()=>Array.from({length:10}),[])
-  const windows=useMemo(()=>Array.from({length:8}),[])
+  const fins=useMemo(()=>Array.from({length:12}),[])
+  const windows=useMemo(()=>Array.from({length:10}),[])
   return <group position={b.p} scale={b.s} onClick={()=>onEnter(b)}>
-    <mesh position={[0,1.8,0]} castShadow><boxGeometry args={[4.6,3.6,3.4]}/><meshStandardMaterial color="#1b2530" roughness={.38} metalness={.55}/></mesh>
+    {/* Solid foundation keeps every building visibly planted on the ground. */}
+    <mesh position={[0,.08,0]} receiveShadow><boxGeometry args={[5.1,.16,3.9]}/><meshStandardMaterial color="#303a44" roughness={.55} metalness={.35}/></mesh>
+    <mesh position={[0,1.9,0]} castShadow receiveShadow><boxGeometry args={[4.6,3.6,3.4]}/><meshStandardMaterial color="#1b2530" roughness={.38} metalness={.55}/></mesh>
     <mesh position={[0,.65,1.73]}><boxGeometry args={[4.2,1.3,.06]}/><meshPhysicalMaterial color="#18374b" transmission={.35} roughness={.12} metalness={.35}/></mesh>
-    {fins.map((_,i)=><group key={i} position={[-2.02+i*.45,1.85,1.76]}><mesh><boxGeometry args={[.12,3.45,.12]}/><meshStandardMaterial color="#6f7880" metalness={.65} roughness={.3}/></mesh><mesh position={[0,0,.08]}><boxGeometry args={[.045,3.1,.03]}/><meshStandardMaterial color="#d7a64c" emissive="#d7a64c" emissiveIntensity={1.8}/></mesh></group>)}
-    {windows.map((_,i)=><mesh key={i} position={[-1.55+(i%4)*1.05,1.55,(i>3?-1.73:1.73)]}><boxGeometry args={[.65,.8,.04]}/><meshStandardMaterial color="#4f778a" emissive="#21495d" emissiveIntensity={.7}/></mesh>)}
+    {fins.map((_,i)=><group key={i} position={[-2.02+i*.365,1.85,1.76]}><mesh><boxGeometry args={[.1,3.45,.12]}/><meshStandardMaterial color="#6f7880" metalness={.65} roughness={.3}/></mesh><mesh position={[0,0,.08]}><boxGeometry args={[.04,3.1,.03]}/><meshStandardMaterial color="#d7a64c" emissive="#d7a64c" emissiveIntensity={1.8}/></mesh></group>)}
+    {windows.map((_,i)=><mesh key={i} position={[-1.55+(i%5)*.775,1.55,(i>4?-1.73:1.73)]}><boxGeometry args={[.52,.8,.04]}/><meshStandardMaterial color="#4f778a" emissive="#21495d" emissiveIntensity={.7}/></mesh>)}
     <mesh position={[0,3.68,0]}><boxGeometry args={[4.9,.18,3.65]}/><meshStandardMaterial color="#303b46" metalness={.5}/></mesh>
-    <Html center position={[0,4.2,0]} distanceFactor={12}><button className="city-label" onClick={e=>{e.stopPropagation();onEnter(b)}}><b>{b.l}</b><span>{b.places} places · {b.c}</span></button></Html>
+    <Html center position={[0,4.25,0]} distanceFactor={12}><button className="city-label" onClick={e=>{e.stopPropagation();onEnter(b)}}><b>{b.l}</b><span>{b.places} places · {b.c}</span></button></Html>
   </group>
 }
 
 function City({onEnter}){
   return <div className="city-core">
-    <Canvas shadows camera={{position:[20,15,23],fov:42}}>
+    <Canvas shadows camera={{position:[15,13,25],fov:42}}>
       <color attach="background" args={['#071727']}/>
       <ambientLight intensity={1.2}/><directionalLight position={[10,20,8]} intensity={2.5} castShadow/>
-      <pointLight position={[0,7,0]} intensity={10} distance={35} color="#d7a64c"/>
+      <pointLight position={[2,7,1]} intensity={10} distance={45} color="#d7a64c"/>
       <Environment preset="city"/>
-      <mesh rotation={[-Math.PI/2,0,0]} receiveShadow><planeGeometry args={[48,38]}/><meshStandardMaterial color="#101c27" roughness={.9}/></mesh>
-      <gridHelper args={[46,24,'#243442','#111f2c']} position={[0,.03,0]}/>
-      <mesh position={[0,.08,2]}><boxGeometry args={[44,.12,2.6]}/><meshStandardMaterial color="#1b2834"/></mesh>
+      <mesh rotation={[-Math.PI/2,0,0]} receiveShadow><planeGeometry args={[56,28]}/><meshStandardMaterial color="#101c27" roughness={.9}/></mesh>
+      <gridHelper args={[54,28,'#243442','#111f2c']} position={[0,.03,0]}/>
+      <mesh position={[0,.08,3]}><boxGeometry args={[54,.12,2.6]}/><meshStandardMaterial color="#1b2834"/></mesh>
       {buildings.map(b=><Building key={b.id} b={b} onEnter={onEnter}/>)}
-      <OrbitControls enablePan enableDamping minDistance={8} maxDistance={38} maxPolarAngle={Math.PI/2.02}/>
+      <OrbitControls enablePan enableDamping minDistance={7} maxDistance={45} maxPolarAngle={Math.PI/2.02}/>
     </Canvas>
-    <div className="city-hud"><div><span>3D OFFICE</span><strong>AI COMPANY CITY</strong><small>Move your view · explore offices · enter any building</small></div><div className="hud-status"><i/>LIVE CITY</div></div>
-    <div className="city-bottom"><span>Walk through the city. Your company lives here.</span><button className="hud-button" onClick={()=>onEnter(buildings[0])}>ENTER FREE OFFICE</button></div>
+    <div className="city-hud"><div><span>3D OFFICE</span><strong>AI COMPANY CITY</strong><small>Explore the five subscription offices</small></div><div className="hud-status"><i/>LIVE CITY</div></div>
+    <div className="city-bottom"><span>FREE → GO → PLUS → PRO → LUXURY</span><button className="hud-button" onClick={()=>onEnter(buildings[0])}>ENTER FREE OFFICE</button></div>
   </div>
 }
 
