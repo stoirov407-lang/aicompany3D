@@ -1,32 +1,92 @@
 import React, { useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Environment, Html } from '@react-three/drei'
+import { Environment, Html, OrbitControls } from '@react-three/drei'
 import './city3d.css'
 
 const plans=[
-{id:'FREE',price:'$0',period:'forever',limit:1,office:'S · 3 places'},
-{id:'TRIAL',price:'$0',period:'14 days',limit:5,office:'M · 5 places'},
-{id:'GO',price:'$4.99',period:'/ month',limit:5,office:'M · 5 places'},
-{id:'PLUS',price:'$12.99',period:'/ month',limit:15,office:'L · 7 places'},
-{id:'PRO',price:'$29.99',period:'/ month',limit:50,office:'XL · 10 places'},
-{id:'LUXURY',price:'$199.50',period:'lifetime',limit:Infinity,office:'XXL · 15+'}
+  {id:'FREE',price:'$0',period:'forever',limit:1,office:'S · 3 places'},
+  {id:'TRIAL',price:'$0',period:'14 days',limit:5,office:'M · 5 places'},
+  {id:'GO',price:'$4.99',period:'/ month',limit:5,office:'M · 5 places'},
+  {id:'PLUS',price:'$12.99',period:'/ month',limit:15,office:'L · 7 places'},
+  {id:'PRO',price:'$29.99',period:'/ month',limit:50,office:'XL · 10 places'},
+  {id:'LUXURY',price:'$199.50',period:'lifetime',limit:Infinity,office:'XXL · 15+'}
 ]
 const categories=['Development','Data & Analytics','Finance','Business','Research','Marketing','Content','Design','Sales & E-commerce','HR','Legal & Compliance','Project Management','AI & Automation','QA & Testing','Security']
 const buildings=[
-{p:[-10,0,-5],s:.65,l:'FREE OFFICE',n:3,c:'S'},
-{p:[-5,0,-2],s:.85,l:'GO OFFICE',n:5,c:'M'},
-{p:[0,0,-6],s:1.05,l:'PLUS OFFICE',n:7,c:'L'},
-{p:[5,0,-2],s:1.3,l:'PRO OFFICE',n:10,c:'XL'},
-{p:[10,0,-6],s:1.65,l:'LUXURY HQ',n:15,c:'XXL'},
-{p:[-8,0,4],s:.75,l:'RESEARCH',n:5,c:'M'},
-{p:[-2,0,5],s:.9,l:'LAB',n:7,c:'L'},
-{p:[4,0,4],s:1.05,l:'STUDIO',n:10,c:'XL'},
-{p:[9,0,5],s:1.2,l:'AI CAMPUS',n:15,c:'XXL'}
+  {id:'FREE',p:[-11,0,-5],s:1,l:'FREE OFFICE',c:'S',places:3},
+  {id:'GO',p:[-5.5,0,-2],s:1.08,l:'GO OFFICE',c:'M',places:5},
+  {id:'PLUS',p:[0,0,-6],s:1.18,l:'PLUS OFFICE',c:'L',places:7},
+  {id:'PRO',p:[6,0,-2],s:1.32,l:'PRO OFFICE',c:'XL',places:10},
+  {id:'LUXURY',p:[12,0,-6],s:1.58,l:'LUXURY HQ',c:'XXL',places:15},
+  {id:'RESEARCH',p:[-9,0,5],s:1,l:'RESEARCH LAB',c:'M',places:5},
+  {id:'STUDIO',p:[-2,0,6],s:1.12,l:'AI STUDIO',c:'L',places:7},
+  {id:'CAMPUS',p:[5,0,5],s:1.3,l:'AI CAMPUS',c:'XL',places:10}
 ]
-function Building({b,onEnter}){const windows=useMemo(()=>Array.from({length:Math.max(5,Math.min(14,b.n+2))}),[b.n]);return <group position={b.p} scale={b.s} onClick={()=>onEnter(b)}><mesh position={[0,1.5,0]} castShadow><boxGeometry args={[3.8,3,3]}/><meshPhysicalMaterial color="#f8fbff" roughness={.2} metalness={.08} transmission={.05}/></mesh><mesh position={[0,3.05,0]}><boxGeometry args={[4,.1,3.2]}/><meshStandardMaterial color="#dbeaff" emissive="#3b86ff" emissiveIntensity={.8}/></mesh>{windows.map((_,i)=><mesh key={i} position={[-1.35+(i%7)*.45,1.55,i>6?1.53:-1.53]}><boxGeometry args={[.27,.5,.04]}/><meshStandardMaterial color="#cfe8ff" emissive="#2f82ff" emissiveIntensity={1.2}/></mesh>)}<Html center position={[0,3.55,0]} distanceFactor={11}><button className="city-label" onClick={e=>{e.stopPropagation();onEnter(b)}}><b>{b.l}</b><span>{b.n===15?'15+':b.n} places · {b.c}</span></button></Html></group>}
-function City({onEnter}){return <div className="city3d"><Canvas shadows camera={{position:[18,14,21],fov:40}}><color attach="background" args={['#eef4fa']}/><ambientLight intensity={1.6}/><directionalLight position={[10,18,8]} intensity={2.4} castShadow/><Environment preset="city"/><mesh rotation={[-Math.PI/2,0,0]} receiveShadow><planeGeometry args={[42,32]}/><meshStandardMaterial color="#e8eef5" roughness={.8}/></mesh><gridHelper args={[40,20,'#cbd8e8','#edf2f8']} position={[0,.02,0]}/><mesh position={[0,.08,1]}><boxGeometry args={[38,.12,2.2]}/><meshStandardMaterial color="#d4dde8"/></mesh>{buildings.map((b,i)=><Building key={i} b={b} onEnter={onEnter}/>)}<OrbitControls enablePan enableDamping minDistance={8} maxDistance={35} maxPolarAngle={Math.PI/2.03}/></Canvas><div className="city-ui"><span>3D OFFICE CITY</span><b>LIVE AI COMPANIES</b><small>Drag · rotate · zoom · tap an office to enter</small></div></div>}
-function AgentDialog({plan,onClose,onCreated}){const [category,setCategory]=useState('Development');const [stage,setStage]=useState('suggest');const confirm=()=>stage==='suggest'?setStage('warning'):onCreated(category);return <div className="modal"><div className="modal-box agent-dialog"><button className="x" onClick={onClose}>×</button>{stage==='suggest'?<><span>AI DIRECTOR</span><h3>I understand your request.</h3><p>I recommend creating a <strong>{category}</strong> agent for this task. You can choose another category below.</p><select value={category} onChange={e=>setCategory(e.target.value)}>{categories.map(c=><option key={c}>{c}</option>)}</select><p className="muted">The Director can create the agent for you. You remain in control.</p><button className="pill primary wide" onClick={confirm}>Allow Director to create</button><button className="text-btn" onClick={onClose}>Cancel</button></>:<><span>FINAL CONFIRMATION</span><h3>Create {category} agent?</h3><p><strong>Your plan: {plan.id}</strong></p><p>This agent uses <strong>1 user agent slot</strong>. Its category is permanent after creation and cannot be changed to another category. The internal Specialists used by 3D Office do not use your slots.</p><p className="warning">This is the last confirmation. Do you agree?</p><button className="pill primary wide" onClick={confirm}>Agree & create agent</button><button className="text-btn" onClick={onClose}>Cancel</button></>}</div></div>}
-function Office({building,onExit,plan}){const [agents,setAgents]=useState([]);const [chat,setChat]=useState('');const [showCreate,setShowCreate]=useState(false);const send=()=>{if(!chat.trim())return;setChat('');setShowCreate(true)};const created=cat=>{setAgents(a=>[...a,{id:Date.now(),cat}]);setShowCreate(false)};const remaining=plan.limit===Infinity?'∞':Math.max(0,plan.limit-agents.length);return <div className="office-screen"><div className="office-top"><button className="pill ghost" onClick={onExit}>← Exit city</button><div><b>{building.l}</b><small>{plan.id} · {agents.length}/{plan.limit===Infinity?'∞':plan.limit} agents</small></div><button className="pill" onClick={()=>setShowCreate(true)} disabled={remaining===0}>+ Create agent</button></div><div className="office-world"><div className="office-room director"><div className="avatar">D</div><h3>AI DIRECTOR</h3><p>“Hello. What would you like to create or do?”</p><span>Director · visible to client</span></div><div className="office-floor"><div className="desk director-desk">DIRECTOR</div>{agents.map((a,i)=><div className="desk agent-desk" key={a.id} style={{left:`${22+i*13}%`}}><div className="avatar small">A</div><b>{a.cat}</b><span>Working</span></div>)}<div className="discussion">DISCUSSION ROOM</div></div><div className="office-chat"><div className="chat-title">DIRECTOR CHAT</div><div className="chat-bubble">Tell me what you want to build, analyze or research. I will understand the task and propose the right agent.</div><div className="chat-row"><input value={chat} onChange={e=>setChat(e.target.value)} onKeyDown={e=>e.key==='Enter'&&send()} placeholder="Describe your task..."/><button onClick={send}>Send</button></div></div></div>{showCreate&&<AgentDialog plan={plan} onClose={()=>setShowCreate(false)} onCreated={created}/>}</div>}
-function App(){const [plan,setPlan]=useState(plans[0]);const [entered,setEntered]=useState(null);const [selected,setSelected]=useState(null);const [message,setMessage]=useState('');const choose=async p=>{setPlan(p);if(p.id==='FREE'||p.id==='TRIAL'){setSelected(p);return}try{const r=await fetch('/api/create-checkout-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:p.id})});const d=await r.json();if(d.url)window.location.href=d.url;else setMessage(d.error||'Checkout is not configured yet.')}catch{setMessage('Could not start checkout.')}};if(entered)return <Office building={entered} plan={plan} onExit={()=>setEntered(null)}/>;return <><nav><div className="brand"><span className="logo">O</span><span>3D OFFICE</span><em>AI COMPANY</em></div><div className="links"><a href="#city">City</a><a href="#process">Process</a><a href="#pricing">Pricing</a></div><button className="pill ghost">Sign in</button></nav><main><section className="hero" id="city"><div className="hero-copy"><div className="eyebrow">3D AI COMPANY <span/></div><h1>A living city for<br/><i>AI companies.</i></h1><p>Enter a real 3D company world. Meet your Director, create your own specialist agents and watch work happen inside your office.</p><div className="hero-actions"><button className="pill primary" onClick={()=>setEntered(buildings[0])}>Enter city <span>↗</span></button><a className="pill ghost" href="#pricing">View plans</a></div></div><City onEnter={setEntered}/></section><section className="process" id="process"><div className="section-label">01 / HOW IT WORKS</div><div className="process-grid"><div><h2>The client decides.<br/><i>Director executes.</i></h2><p>Director analyzes the conversation, proposes a user agent, asks for permission and shows a final warning before permanent category assignment.</p></div><div className="steps">{[['01','CONVERSATION','Tell the Director what you want to accomplish.'],['02','PROPOSAL','Director understands the task and proposes a category.'],['03','CONFIRMATION','You approve, then receive one final permanent-category warning.'],['04','WORK','The agent appears in the 3D office and the Director manages its tasks.']].map(s=><article key={s[0]}><span>{s[0]}</span><b>{s[1]}</b><p>{s[2]}</p></article>)}</div></div></section><section className="pricing" id="pricing"><div className="section-label">02 / PLANS</div><div className="pricing-head"><h2>Your office.<br/><i>Your choice of agents.</i></h2><p>The limit is the total number of user-created agents. You decide how to distribute them across categories. Internal Specialists never consume your slots.</p></div><div className="cards">{plans.map(p=><article className={`card ${p.id==='PRO'?'featured':''}`} key={p.id}><div className="card-top"><span>{p.id}</span>{p.id==='PRO'&&<label>POPULAR</label>}</div><div className="price">{p.price}<small>{p.period}</small></div><b>{p.limit===Infinity?'Unlimited':p.limit} user agents</b><p>{p.office}</p><p className="note">Any category mix · permanent category per agent</p><button className="pill" onClick={()=>choose(p)}>{p.id==='FREE'?'Start free':`Choose ${p.id}`}</button></article>)}</div></section><section className="promise"><div><span>03 / SYSTEM ARCHITECTURE</span><h2>Visible agents.<br/><i>Invisible intelligence.</i></h2></div><p>Director, Task Planner, Agent Router, Research Specialist, Space Specialist, Fact Checker, Review Specialist, Code Reviewer, Security Reviewer, Quality Controller and Report Specialist operate behind the scenes. They are not user agents and never consume plan slots.</p></section></main><footer><span>3D OFFICE · AI COMPANY</span><span>Virtual offices for intelligent teams</span></footer>{selected&&<div className="modal"><div className="modal-box"><button className="x" onClick={()=>setSelected(null)}>×</button><span>{selected.id}</span><h3>{selected.id==='FREE'?'Welcome to your free office':'Start your trial'}</h3><p>Your Director is ready. Enter the city and create your first user agent when you are ready.</p><button className="pill primary wide" onClick={()=>{setSelected(null);setEntered(buildings[0])}}>Enter office</button></div></div>}{message&&<div className="toast">{message}<button onClick={()=>setMessage('')}>×</button></div>}</>}
+
+function Building({b,onEnter}){
+  const fins=useMemo(()=>Array.from({length:10}),[])
+  const windows=useMemo(()=>Array.from({length:8}),[])
+  return <group position={b.p} scale={b.s} onClick={()=>onEnter(b)}>
+    <mesh position={[0,1.8,0]} castShadow><boxGeometry args={[4.6,3.6,3.4]}/><meshStandardMaterial color="#1b2530" roughness={.38} metalness={.55}/></mesh>
+    <mesh position={[0,.65,1.73]}><boxGeometry args={[4.2,1.3,.06]}/><meshPhysicalMaterial color="#18374b" transmission={.35} roughness={.12} metalness={.35}/></mesh>
+    {fins.map((_,i)=><group key={i} position={[-2.02+i*.45,1.85,1.76]}><mesh><boxGeometry args={[.12,3.45,.12]}/><meshStandardMaterial color="#6f7880" metalness={.65} roughness={.3}/></mesh><mesh position={[0,0,.08]}><boxGeometry args={[.045,3.1,.03]}/><meshStandardMaterial color="#d7a64c" emissive="#d7a64c" emissiveIntensity={1.8}/></mesh></group>)}
+    {windows.map((_,i)=><mesh key={i} position={[-1.55+(i%4)*1.05,1.55,(i>3?-1.73:1.73)]}><boxGeometry args={[.65,.8,.04]}/><meshStandardMaterial color="#4f778a" emissive="#21495d" emissiveIntensity={.7}/></mesh>)}
+    <mesh position={[0,3.68,0]}><boxGeometry args={[4.9,.18,3.65]}/><meshStandardMaterial color="#303b46" metalness={.5}/></mesh>
+    <Html center position={[0,4.2,0]} distanceFactor={12}><button className="city-label" onClick={e=>{e.stopPropagation();onEnter(b)}}><b>{b.l}</b><span>{b.places} places · {b.c}</span></button></Html>
+  </group>
+}
+
+function City({onEnter}){
+  return <div className="city-core">
+    <Canvas shadows camera={{position:[20,15,23],fov:42}}>
+      <color attach="background" args={['#071727']}/>
+      <ambientLight intensity={1.2}/><directionalLight position={[10,20,8]} intensity={2.5} castShadow/>
+      <pointLight position={[0,7,0]} intensity={10} distance={35} color="#d7a64c"/>
+      <Environment preset="city"/>
+      <mesh rotation={[-Math.PI/2,0,0]} receiveShadow><planeGeometry args={[48,38]}/><meshStandardMaterial color="#101c27" roughness={.9}/></mesh>
+      <gridHelper args={[46,24,'#243442','#111f2c']} position={[0,.03,0]}/>
+      <mesh position={[0,.08,2]}><boxGeometry args={[44,.12,2.6]}/><meshStandardMaterial color="#1b2834"/></mesh>
+      {buildings.map(b=><Building key={b.id} b={b} onEnter={onEnter}/>)}
+      <OrbitControls enablePan enableDamping minDistance={8} maxDistance={38} maxPolarAngle={Math.PI/2.02}/>
+    </Canvas>
+    <div className="city-hud"><div><span>3D OFFICE</span><strong>AI COMPANY CITY</strong><small>Move your view · explore offices · enter any building</small></div><div className="hud-status"><i/>LIVE CITY</div></div>
+    <div className="city-bottom"><span>Walk through the city. Your company lives here.</span><button className="hud-button" onClick={()=>onEnter(buildings[0])}>ENTER FREE OFFICE</button></div>
+  </div>
+}
+
+function AgentDialog({plan,onClose,onCreated}){
+  const [category,setCategory]=useState('Development'); const [stage,setStage]=useState('suggest')
+  const confirm=()=>stage==='suggest'?setStage('warning'):onCreated(category)
+  return <div className="modal"><div className="modal-box agent-dialog"><button className="x" onClick={onClose}>×</button>{stage==='suggest'?<><span>DIRECTOR</span><h3>I understand what you want to accomplish.</h3><p>I recommend a <strong>{category}</strong> agent for this task. You can choose a different category.</p><select value={category} onChange={e=>setCategory(e.target.value)}>{categories.map(c=><option key={c}>{c}</option>)}</select><button className="pill primary wide" onClick={confirm}>Allow Director to create</button><button className="text-btn" onClick={onClose}>Cancel</button></>:<><span>FINAL CONFIRMATION</span><h3>Create {category} agent?</h3><p>Your <strong>{plan.id}</strong> plan has {plan.limit===Infinity?'unlimited':plan.limit} user-agent slots. This agent uses one slot.</p><p className="warning">This is the last confirmation. The category becomes permanent and cannot be changed later. Agree?</p><button className="pill primary wide" onClick={confirm}>Agree & create agent</button><button className="text-btn" onClick={onClose}>Cancel</button></>}</div></div>
+}
+
+function Office({building,plan,onExit,onBuy}){
+  const [agents,setAgents]=useState([]); const [chat,setChat]=useState(''); const [showCreate,setShowCreate]=useState(false)
+  const owned=plan.id===building.id || plan.id==='LUXURY' || (building.id==='FREE'&&plan.id==='FREE') || (building.id==='TRIAL'&&plan.id==='TRIAL')
+  const remaining=plan.limit===Infinity?'∞':Math.max(0,plan.limit-agents.length)
+  const send=()=>{if(!chat.trim())return;setChat('');setShowCreate(true)}
+  const created=cat=>{setAgents(a=>[...a,{id:Date.now(),cat}]);setShowCreate(false)}
+  return <div className="office-screen"><div className="office-top"><button className="pill ghost" onClick={onExit}>← City</button><div><b>{building.l}</b><small>{owned?'ACTIVE OFFICE':'PREVIEW · '+building.c+' OFFICE'} · {agents.length}/{remaining} user agents</small></div>{!owned?<button className="pill primary" onClick={()=>onBuy(building.id)}>Buy {building.id}</button>:<button className="pill primary" onClick={()=>setShowCreate(true)} disabled={remaining===0}>+ Create agent</button>}</div>
+    <div className="office-canvas"><Canvas shadows camera={{position:[10,8,13],fov:48}}><color attach="background" args={['#d9d9d7']}/><ambientLight intensity={2}/><directionalLight position={[4,12,6]} intensity={3} castShadow/><Environment preset="city"/>
+      <mesh rotation={[-Math.PI/2,0,0]} receiveShadow><planeGeometry args={[24,20]}/><meshStandardMaterial color="#d8d7d2" roughness={.8}/></mesh>
+      <mesh position={[0,3,-9]}><boxGeometry args={[24,6,.15]}/><meshStandardMaterial color="#f1f0eb"/></mesh>
+      <mesh position={[0,3,9]}><boxGeometry args={[24,6,.15]}/><meshStandardMaterial color="#f1f0eb"/></mesh>
+      <mesh position={[-12,3,0]}><boxGeometry args={[.15,6,18]}/><meshStandardMaterial color="#f1f0eb"/></mesh>
+      <group position={[7,2.7,-4.8]}><mesh><boxGeometry args={[6,.12,5.5]}/><meshStandardMaterial color="#f4f3ef"/></mesh><mesh position={[0,1.45,-2.7]}><boxGeometry args={[6,2.8,.08]}/><meshPhysicalMaterial color="#c9d0d2" transmission={.7} roughness={.12}/></mesh><mesh position={[-3,1.45,0]}><boxGeometry args={[.08,2.8,5.5]}/><meshPhysicalMaterial color="#c9d0d2" transmission={.7} roughness={.12}/></mesh><mesh position={[0,2.8,0]}><boxGeometry args={[6,.08,5.5]}/><meshStandardMaterial color="#ecebe7"/></mesh><Html position={[0,1.5,0]} center><div className="room-sign">DIRECTOR OFFICE</div></Html><mesh position={[0,.8,-1]}><boxGeometry args={[2,.15,1]}/><meshStandardMaterial color="#e7e5df"/></mesh><mesh position={[0,1.4,-1.15]}><boxGeometry args={[.8,1.1,.08]}/><meshStandardMaterial color="#171b20"/></mesh></group>
+      <group>{Array.from({length:8}).map((_,i)=>{const x=-6+(i%4)*4;const z=2+Math.floor(i/4)*4;return <group key={i} position={[x,0,z]}><mesh position={[0,.75,0]}><boxGeometry args={[3,.12,1.25]}/><meshStandardMaterial color="#f1f0eb"/></mesh><mesh position={[0,1.3,0]}><boxGeometry args={[.85,.55,.05]}/><meshStandardMaterial color="#171b20"/></mesh><mesh position={[0,.45,.8]}><boxGeometry args={[.9,.08,.08]}/><meshStandardMaterial color="#24282c"/></mesh></group>})}</group>
+      {agents.map((a,i)=><Html key={a.id} position={[-6+(i%4)*4,1.8,2+Math.floor(i/4)*4]} center><div className="agent-tag">{a.cat}<small>WORKING</small></div></Html>)}
+      <OrbitControls enablePan enableDamping minDistance={4} maxDistance={28} maxPolarAngle={Math.PI/2.05}/>
+    </Canvas><div className="office-brief"><span>WELCOME</span><strong>DIRECTOR</strong><p>“Здравствуйте. Что вы хотите сделать или создать?”</p>{!owned&&<button className="pill primary" onClick={()=>onBuy(building.id)}>Посмотреть условия {building.id}</button>}</div>
+      <div className="office-chat"><div className="chat-title">DIRECTOR · WORK PLANNING</div><div className="chat-bubble">Я анализирую вашу цель, подбираю подходящих агентов и после работы проверяю результат.</div><div className="chat-row"><input value={chat} onChange={e=>setChat(e.target.value)} onKeyDown={e=>e.key==='Enter'&&send()} placeholder="Что вы хотите сделать?"/><button onClick={send}>Send</button></div></div>
+    </div>{showCreate&&<AgentDialog plan={plan} onClose={()=>setShowCreate(false)} onCreated={created}/>}</div>
+}
+
+function App(){
+  const [plan,setPlan]=useState(plans[0]); const [office,setOffice]=useState(null); const [showPlans,setShowPlans]=useState(false); const [message,setMessage]=useState('')
+  const buy=async id=>{const p=plans.find(x=>x.id===id);if(!p||p.id==='FREE'||p.id==='TRIAL'){setPlan(p||plan);setOffice(buildings.find(b=>b.id===id)||buildings[0]);return} try{const r=await fetch('/api/create-checkout-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:p.id})});const d=await r.json();if(d.url)window.location.href=d.url;else{setMessage(d.error||'Checkout is not configured yet.');setShowPlans(true)}}catch{setMessage('Could not start checkout.')}}
+  if(office)return <Office building={office} plan={plan} onExit={()=>setOffice(null)} onBuy={buy}/>
+  return <div className="app-core"><City onEnter={setOffice}/><div className="core-top"><div className="core-brand"><b>3D OFFICE</b><span>AI COMPANY</span></div><button className="pill" onClick={()=>setShowPlans(true)}>{plan.id} · {plan.limit===Infinity?'∞':plan.limit} agents</button></div>{showPlans&&<div className="modal"><div className="modal-box plans-modal"><button className="x" onClick={()=>setShowPlans(false)}>×</button><span>OFFICES & PLANS</span><h3>Choose the company space you need.</h3><div className="plan-list">{plans.map(p=><button key={p.id} className="plan-row" onClick={()=>{setShowPlans(false);buy(p.id)}}><b>{p.id}</b><span>{p.price} {p.period}</span><small>{p.limit===Infinity?'∞':p.limit} user agents · {p.office}</small></button>)}</div></div></div>}{message&&<div className="toast">{message}<button onClick={()=>setMessage('')}>×</button></div>}</div>
+}
+
 createRoot(document.getElementById('root')).render(<App/>)
