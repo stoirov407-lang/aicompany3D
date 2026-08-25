@@ -14,45 +14,45 @@ const plans=[
 ]
 const categories=['Development','Data & Analytics','Finance','Business','Research','Marketing','Content','Design','Sales & E-commerce','HR','Legal & Compliance','Project Management','AI & Automation','QA & Testing','Security']
 
-// Only subscription offices are visible in the city. Each level is physically larger than the previous one.
+// Six subscription offices. Each level is dramatically larger than the previous one.
 const buildings=[
-  {id:'FREE',p:[-10,0,-1],s:.58,l:'FREE OFFICE',c:'S',places:3},
-  {id:'GO',p:[-4.7,0,-1],s:.82,l:'GO OFFICE',c:'M',places:5},
-  {id:'PLUS',p:[1.8,0,-1],s:1.08,l:'PLUS OFFICE',c:'L',places:7},
-  {id:'PRO',p:[9.4,0,-1],s:1.38,l:'PRO OFFICE',c:'XL',places:10},
-  {id:'LUXURY',p:[18.5,0,-1],s:1.78,l:'LUXURY HQ',c:'XXL',places:15}
+  {id:'FREE',p:[-50,0,-8],s:.7,l:'FREE OFFICE',c:'S',places:3},
+  {id:'TRIAL',p:[-25,0,8],s:1.25,l:'TRIAL OFFICE',c:'M',places:5},
+  {id:'GO',p:[2,0,-8],s:1.9,l:'GO OFFICE',c:'M',places:5},
+  {id:'PLUS',p:[38,0,8],s:2.9,l:'PLUS OFFICE',c:'L',places:7},
+  {id:'PRO',p:[82,0,-8],s:4.4,l:'PRO OFFICE',c:'XL',places:10},
+  {id:'LUXURY',p:[142,0,8],s:7,l:'LUXURY HQ',c:'XXL',places:15}
 ]
 
 function Building({b,onEnter}){
-  const fins=useMemo(()=>Array.from({length:12}),[])
-  const windows=useMemo(()=>Array.from({length:10}),[])
+  const fins=useMemo(()=>Array.from({length:14}),[])
+  const windows=useMemo(()=>Array.from({length:12}),[])
   return <group position={b.p} scale={b.s} onClick={()=>onEnter(b)}>
-    {/* Solid foundation keeps every building visibly planted on the ground. */}
-    <mesh position={[0,.08,0]} receiveShadow><boxGeometry args={[5.1,.16,3.9]}/><meshStandardMaterial color="#303a44" roughness={.55} metalness={.35}/></mesh>
+    <mesh position={[0,.08,0]} receiveShadow><boxGeometry args={[5.5,.16,4.2]}/><meshStandardMaterial color="#303a44" roughness={.55} metalness={.35}/></mesh>
     <mesh position={[0,1.9,0]} castShadow receiveShadow><boxGeometry args={[4.6,3.6,3.4]}/><meshStandardMaterial color="#1b2530" roughness={.38} metalness={.55}/></mesh>
     <mesh position={[0,.65,1.73]}><boxGeometry args={[4.2,1.3,.06]}/><meshPhysicalMaterial color="#18374b" transmission={.35} roughness={.12} metalness={.35}/></mesh>
-    {fins.map((_,i)=><group key={i} position={[-2.02+i*.365,1.85,1.76]}><mesh><boxGeometry args={[.1,3.45,.12]}/><meshStandardMaterial color="#6f7880" metalness={.65} roughness={.3}/></mesh><mesh position={[0,0,.08]}><boxGeometry args={[.04,3.1,.03]}/><meshStandardMaterial color="#d7a64c" emissive="#d7a64c" emissiveIntensity={1.8}/></mesh></group>)}
-    {windows.map((_,i)=><mesh key={i} position={[-1.55+(i%5)*.775,1.55,(i>4?-1.73:1.73)]}><boxGeometry args={[.52,.8,.04]}/><meshStandardMaterial color="#4f778a" emissive="#21495d" emissiveIntensity={.7}/></mesh>)}
+    {fins.map((_,i)=><group key={i} position={[-2.15+i*.33,1.85,1.76]}><mesh><boxGeometry args={[.1,3.45,.12]}/><meshStandardMaterial color="#6f7880" metalness={.65} roughness={.3}/></mesh><mesh position={[0,0,.08]}><boxGeometry args={[.04,3.1,.03]}/><meshStandardMaterial color="#d7a64c" emissive="#d7a64c" emissiveIntensity={1.8}/></mesh></group>)}
+    {windows.map((_,i)=><mesh key={i} position={[-1.55+(i%6)*.62,1.55,(i>5?-1.73:1.73)]}><boxGeometry args={[.48,.8,.04]}/><meshStandardMaterial color="#4f778a" emissive="#21495d" emissiveIntensity={.7}/></mesh>)}
     <mesh position={[0,3.68,0]}><boxGeometry args={[4.9,.18,3.65]}/><meshStandardMaterial color="#303b46" metalness={.5}/></mesh>
-    <Html center position={[0,4.25,0]} distanceFactor={12}><button className="city-label" onClick={e=>{e.stopPropagation();onEnter(b)}}><b>{b.l}</b><span>{b.places} places · {b.c}</span></button></Html>
+    {/* No floating text or subscription labels are placed on the building itself. */}
   </group>
 }
 
 function City({onEnter}){
   return <div className="city-core">
-    <Canvas shadows camera={{position:[15,13,25],fov:42}}>
+    <Canvas shadows camera={{position:[80,48,105],fov:42}}>
       <color attach="background" args={['#071727']}/>
-      <ambientLight intensity={1.2}/><directionalLight position={[10,20,8]} intensity={2.5} castShadow/>
-      <pointLight position={[2,7,1]} intensity={10} distance={45} color="#d7a64c"/>
+      <ambientLight intensity={1.2}/><directionalLight position={[40,45,20]} intensity={2.8} castShadow/>
+      <pointLight position={[25,12,2]} intensity={16} distance={100} color="#d7a64c"/>
       <Environment preset="city"/>
-      <mesh rotation={[-Math.PI/2,0,0]} receiveShadow><planeGeometry args={[56,28]}/><meshStandardMaterial color="#101c27" roughness={.9}/></mesh>
-      <gridHelper args={[54,28,'#243442','#111f2c']} position={[0,.03,0]}/>
-      <mesh position={[0,.08,3]}><boxGeometry args={[54,.12,2.6]}/><meshStandardMaterial color="#1b2834"/></mesh>
+      <mesh rotation={[-Math.PI/2,0,0]} receiveShadow><planeGeometry args={[210,48]}/><meshStandardMaterial color="#101c27" roughness={.9}/></mesh>
+      <gridHelper args={[205,50,'#243442','#111f2c']} position={[45,.03,0]}/>
+      <mesh position={[45,.08,0]}><boxGeometry args={[200,.12,3.2]}/><meshStandardMaterial color="#1b2834"/></mesh>
       {buildings.map(b=><Building key={b.id} b={b} onEnter={onEnter}/>)}
-      <OrbitControls enablePan enableDamping minDistance={7} maxDistance={45} maxPolarAngle={Math.PI/2.02}/>
+      <OrbitControls enablePan enableDamping minDistance={10} maxDistance={185} maxPolarAngle={Math.PI/2.02}/>
     </Canvas>
-    <div className="city-hud"><div><span>3D OFFICE</span><strong>AI COMPANY CITY</strong><small>Explore the five subscription offices</small></div><div className="hud-status"><i/>LIVE CITY</div></div>
-    <div className="city-bottom"><span>FREE → GO → PLUS → PRO → LUXURY</span><button className="hud-button" onClick={()=>onEnter(buildings[0])}>ENTER FREE OFFICE</button></div>
+    <div className="city-hud"><div><span>3D OFFICE</span><strong>AI COMPANY CITY</strong><small>Explore six offices · each level grows dramatically</small></div><div className="hud-status"><i/>LIVE CITY</div></div>
+    <div className="city-bottom"><span>FREE → TRIAL → GO → PLUS → PRO → LUXURY</span><button className="hud-button" onClick={()=>onEnter(buildings[0])}>ENTER FREE OFFICE</button></div>
   </div>
 }
 
